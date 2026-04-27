@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}测试结果 - 模型性能{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">📊 模型性能统计</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.total_samples }}</div>
+                <div class="stat-label">测试样本数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.mean_error }}</div>
+                <div class="stat-label">平均绝对误差</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.rmse }}</div>
+                <div class="stat-label">RMSE</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">{{ stats.r2 }}</div>
+                <div class="stat-label">R² 得分</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2 class="card-title">📈 特征重要性</h2>
+        <div class="chart-container">
+            <canvas id="featureChart"></canvas>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>排名</th>
+                    <th>特征</th>
+                    <th>重要性</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for feature in feature_importance %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ feature.feature }}</td>
+                    <td>{{ "%.4f"|format(feature.importance) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="card">
+        <h2 class="card-title">🎯 预测结果对比 (前100条)</h2>
+        <div class="chart-container">
+            <canvas id="predictionChart"></canvas>
+        </div>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>实际价格</th>
+                        <th>预测价格</th>
+                        <th>误差</th>
+                        <th>误差百分比</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in sample_data %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>${{ "%.0f"|format(item.actual) }}</td>
+                        <td>${{ "%.0f"|format(item.predicted) }}</td>
+                        <td style="color: {% if item.residual > 0 %}#4CAF50{% else %}#f44336{% endif %}">
+                            {{ "+%.0f"|format(item.residual) if item.residual > 0 else "%.0f"|format(item.residual) }}
+                        </td>
+                        <td>{{ "%.2f"|format((item.residual|abs / item.actual * 100)) }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2 class="card-title">📁 生成的分析图表</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+            <div style="text-align: center;">
+                <img src="/static/actual_vs_predicted.png" alt="Actual vs Predicted" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <p style="margin-top: 0.5rem; color: #666;">实际值 vs 预测值</p>
+            </div>
+            <div style="text-align: center;">
+                <img src="/static/residual_analysis.png" alt="Residual Analysis" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <p style="margin-top: 0.5rem; color: #666;">残差分析</p>
+            </div>
+            <div style="text-align: center;">
+                <img src="/static/feature_importance.png" alt="Feature Importance" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <p style="margin-top: 0.5rem; color: #666;">特征重要性</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// 特征重要性图表
+const featureCtx = document.getElementById('featureChart').getContext('2d');
+const featureData = {{ feature_importance|tojson }};
+
+new Chart(featureCtx, {
+    type: 'bar',
+    data: {
+        labels: featureData.map(f => f.feature),
+        datasets: [{
+            label: '重要性',
+            data: featureData.map(f => f.importance),
+            backgroundColor: 'rgba(102, 126, 234, 0.8)',
+            borderColor: 'rgba(102, 126, 234, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: { display: true, text: '重要性' }
+            }
+        }
+    }
+});
+
+// 预测结果对比图表
+const predictionCtx = document.getElementById('predictionChart').getContext('2d');
+const sampleData = {{ sample_data|tojson }};
+
+new Chart(predictionCtx, {
+    type: 'scatter',
+    data: {
+        datasets: [{
+            label: '预测结果',
+            data: sampleData.map(d => ({ x: d.actual, y: d.predicted })),
+            backgroundColor: 'rgba(102, 126, 234, 0.6)',
+            pointRadius: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: {
+                title: { display: true, text: '实际价格' },
+                ticks: {
+                    callback: function(value) {
+                        return '$' + (value / 1000).toFixed(0) + 'k';
+                    }
+                }
+            },
+            y: {
+                title: { display: true, text: '预测价格' },
+                ticks: {
+                    callback: function(value) {
+                        return '$' + (value / 1000).toFixed(0) + 'k';
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

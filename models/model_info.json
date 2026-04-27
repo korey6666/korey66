@@ -1,0 +1,41 @@
+{
+  "model_type": "DecisionTreeRegressor",
+  "features": [
+    "median_income",
+    "bedroom_ratio",
+    "rooms_per_person",
+    "rooms_per_household",
+    "latitude",
+    "total_rooms",
+    "housing_median_age",
+    "ocean_proximity_encoded",
+    "households",
+    "total_bedrooms",
+    "longitude",
+    "bedrooms_per_household",
+    "income_per_room",
+    "population",
+    "population_per_household"
+  ],
+  "params": {
+    "max_depth": 15,
+    "min_samples_split": 10,
+    "min_samples_leaf": 5
+  },
+  "metrics": {
+    "train": {
+      "mse": 1217342102.092215,
+      "rmse": 34890.42994994781,
+      "mae": 22728.574924197652,
+      "r2": 0.9089346242064593
+    },
+    "test": {
+      "mse": 3940742227.760692,
+      "rmse": 62775.33136320901,
+      "mae": 40545.72232857817,
+      "r2": 0.6992738684490116
+    }
+  },
+  "tree_depth": 15,
+  "n_leaves": 1926
+}

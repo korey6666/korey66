@@ -1,0 +1,79 @@
+{
+  "model_info": {
+    "type": "DecisionTreeRegressor",
+    "tree_depth": 15,
+    "n_leaves": 1926,
+    "n_features": 15
+  },
+  "metrics": {
+    "train": {
+      "mse": 1217342102.092215,
+      "rmse": 34890.42994994781,
+      "mae": 22728.574924197652,
+      "r2": 0.9089346242064593
+    },
+    "test": {
+      "mse": 3940742227.760692,
+      "rmse": 62775.33136320901,
+      "mae": 40545.72232857817,
+      "r2": 0.6992738684490116
+    }
+  },
+  "error_statistics": {
+    "mean_error": 361.2475802026733,
+    "std_error": 62774.291935046866,
+    "max_positive_error": 379381.0,
+    "max_negative_error": -319940.4,
+    "median_absolute_error": 23808.03571428571,
+    "mean_absolute_percentage_error": 22.264793460746642
+  },
+  "accuracy_thresholds": {
+    "within_5%": 20.009689922480618,
+    "within_10%": 38.44476744186046,
+    "within_15%": 51.55038759689923,
+    "within_20%": 63.759689922480625,
+    "within_25%": 71.8265503875969
+  },
+  "top_features": [
+    {
+      "feature": "median_income",
+      "importance": 0.5506496246947254
+    },
+    {
+      "feature": "population_per_household",
+      "importance": 0.12611827984869134
+    },
+    {
+      "feature": "ocean_proximity_encoded",
+      "importance": 0.07703612252948441
+    },
+    {
+      "feature": "latitude",
+      "importance": 0.06758163443866637
+    },
+    {
+      "feature": "longitude",
+      "importance": 0.06383402565807082
+    },
+    {
+      "feature": "housing_median_age",
+      "importance": 0.0414565890981558
+    },
+    {
+      "feature": "rooms_per_person",
+      "importance": 0.018221243865342754
+    },
+    {
+      "feature": "bedrooms_per_household",
+      "importance": 0.010576477266585393
+    },
+    {
+      "feature": "rooms_per_household",
+      "importance": 0.009526563501514297
+    },
+    {
+      "feature": "bedroom_ratio",
+      "importance": 0.009308992197277067
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}房价预测系统 - 首页{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>加州房价预测系统</h1>
+    <p>基于决策树机器学习模型的智能房价预测平台</p>
+    <a href="/predict" class="btn" style="font-size: 1.2rem; padding: 1rem 3rem;">开始预测</a>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">📊 模型概览</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">20,640</div>
+                <div class="stat-label">训练样本数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">15</div>
+                <div class="stat-label">特征数量</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0.699</div>
+                <div class="stat-label">测试集 R² 得分</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">62,775</div>
+                <div class="stat-label">RMSE</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2 class="card-title">🚀 功能特性</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">智能预测</div>
+                <div class="feature-desc">基于决策树算法，快速准确地预测房价</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <div class="feature-title">数据分析</div>
+                <div class="feature-desc">完整的数据分析和可视化展示</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <div class="feature-title">特征重要性</div>
+                <div class="feature-desc">了解哪些因素最影响房价</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <div class="feature-title">易于使用</div>
+                <div class="feature-desc">简洁直观的用户界面</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2 class="card-title">📋 使用说明</h2>
+        <ol style="line-height: 2; margin-left: 2rem;">
+            <li>点击"开始预测"进入预测页面</li>
+            <li>输入房屋的相关信息（位置、房间数、收入等）</li>
+            <li>点击"预测"按钮获取房价预测结果</li>
+            <li>查看"测试结果"页面了解模型性能</li>
+        </ol>
+    </div>
+    
+    <div class="card">
+        <h2 class="card-title">🔑 关键特征</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>特征</th>
+                    <th>描述</th>
+                    <th>重要性</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>median_income</td>
+                    <td>收入中位数</td>
+                    <td>55.06%</td>
+                </tr>
+                <tr>
+                    <td>population_per_household</td>
+                    <td>每户人口数</td>
+                    <td>12.61%</td>
+                </tr>
+                <tr>
+                    <td>ocean_proximity</td>
+                    <td>海洋距离</td>
+                    <td>7.70%</td>
+                </tr>
+                <tr>
+                    <td>latitude</td>
+                    <td>纬度</td>
+                    <td>6.76%</td>
+                </tr>
+                <tr>
+                    <td>longitude</td>
+                    <td>经度</td>
+                    <td>6.38%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

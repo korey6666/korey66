@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}房价预测 - 输入数据{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <h2 class="card-title">🏠 房价预测</h2>
+        <p style="color: #666; margin-bottom: 2rem;">请输入房屋相关信息，系统将为您预测房价</p>
+        
+        <form id="predictForm">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div class="form-group">
+                    <label for="longitude">经度 (Longitude)</label>
+                    <input type="number" step="any" class="form-control" id="longitude" name="longitude" value="-122.23" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="latitude">纬度 (Latitude)</label>
+                    <input type="number" step="any" class="form-control" id="latitude" name="latitude" value="37.88" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="housing_median_age">房屋年龄中位数</label>
+                    <input type="number" step="any" class="form-control" id="housing_median_age" name="housing_median_age" value="41" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="total_rooms">总房间数</label>
+                    <input type="number" step="any" class="form-control" id="total_rooms" name="total_rooms" value="880" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="total_bedrooms">总卧室数</label>
+                    <input type="number" step="any" class="form-control" id="total_bedrooms" name="total_bedrooms" value="129" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="population">人口数</label>
+                    <input type="number" step="any" class="form-control" id="population" name="population" value="322" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="households">家庭数</label>
+                    <input type="number" step="any" class="form-control" id="households" name="households" value="126" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="median_income">收入中位数 (万美元)</label>
+                    <input type="number" step="any" class="form-control" id="median_income" name="median_income" value="8.3252" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="ocean_proximity">海洋距离</label>
+                    <select class="form-control" id="ocean_proximity" name="ocean_proximity" required>
+                        {% for category in ocean_categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem; text-align: center;">
+                <button type="submit" class="btn" style="font-size: 1.1rem; padding: 1rem 3rem;">🔮 预测房价</button>
+            </div>
+        </form>
+        
+        <div id="result" style="display: none;">
+            <div class="result-box">
+                <div class="result-label">预测房价</div>
+                <div class="result-value" id="predictedPrice">$0</div>
+            </div>
+        </div>
+        
+        <div id="error" style="display: none; margin-top: 2rem; padding: 1rem; background: #fee; color: #c33; border-radius: 8px;">
+        </div>
+    </div>
+    
+    <div class="card">
+        <h2 class="card-title">💡 提示</h2>
+        <ul style="line-height: 2; margin-left: 2rem; color: #666;">
+            <li>经度范围: -124 到 -114 (加州地区)</li>
+            <li>纬度范围: 32 到 42 (加州地区)</li>
+            <li>收入中位数单位: 万美元</li>
+            <li>海洋距离选项: &lt;1H OCEAN, INLAND, ISLAND, NEAR BAY, NEAR OCEAN</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('predictForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch('/predict', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('predictedPrice').textContent = '$' + data.predicted_price.toLocaleString();
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            
+            // 滚动到结果
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        } else {
+            document.getElementById('error').textContent = '错误: ' + data.error;
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+        }
+    } catch (error) {
+        document.getElementById('error').textContent = '请求失败: ' + error.message;
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('result').style.display = 'none';
+    }
+});
+</script>
+{% endblock %}
